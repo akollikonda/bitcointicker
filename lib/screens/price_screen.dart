@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bitcointicker/coin_data.dart';
+import 'package:bitcointicker/services/coin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -12,9 +13,14 @@ class PriceScreen extends StatefulWidget {
 class _PriceScreenState extends State<PriceScreen> {
   String selectedCurrency = 'USD';
 
+  Future<dynamic> getExchnageRate(String coin, String currency) async {
+    CoinModel model = CoinModel();
+    var coinData = await model.getCoinData(coin, currency);
+    return coinData['rate'];
+  }
+
   Widget iosPicker() {
     return CupertinoPicker(
-      children: gerDropDownCupertionItems(),
       magnification: 1.22,
       squeeze: 1.2,
       useMagnifier: true,
@@ -22,8 +28,11 @@ class _PriceScreenState extends State<PriceScreen> {
       scrollController: FixedExtentScrollController(initialItem: 0),
       onSelectedItemChanged: (int selectedItem) {
         print(selectedItem);
-        setState(() {});
+        setState(() {
+          selectedCurrency = currenciesList[selectedItem];
+        });
       },
+      children: gerDropDownCupertionItems(),
     );
   }
 
@@ -88,7 +97,7 @@ class _PriceScreenState extends State<PriceScreen> {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
                 child: Text(
-                  '1 BTC = ? USD',
+                  '1 BTC = ',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20.0,
